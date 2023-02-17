@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool can_happen(int P[], int n, int m, int mid) {
+    int students = 1;
+    int pages = 0;
+    for (int i = 0; i < n; i++) {
+        if (P[i] > mid) {
+            return false;
+        }
+        if (pages + P[i] > mid) {
+            students++;
+            pages = P[i];
+            if (students > m) {
+                return false;
+            }
+        } else {
+            pages += P[i];
+        }
+    }
+    return true;
+}
+
+int find_min_max_pages(int P[], int n, int m) {
+    if (n < m) {
+        return -1;
+    }
+    int low = P[0];
+    int high = 0;
+    for (int i = 0; i < n; i++) {
+        high += P[i];
+        if (P[i] > low) {
+            low = P[i];
+        }
+    }
+    int result = -1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (can_happen(P, n, m, mid)) {
+            result = mid;
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return result;
+}
+
+int main() {
+    int n, m;
+    
+    scanf("%d", &n);
+    int pages[n];
+    int i=0;
+    while(i < n) {
+                scanf("%d", &pages[i]);
+                i++;
+    }
+    
+    scanf("%d", &m);
+    int result = find_min_max_pages(pages, n, m);
+    if (result == -1) {
+        printf("A valid assignment is not possible\n");
+    } else{
+        printf("The minimum value of the maximum number of pages allocated to a student is %d\n", result);
+}
+    return 0;
+}
